@@ -26,8 +26,8 @@ REGIME_TRANSITION = np.array([
 
 PRICE_TRANSITION = {
     "normal":   np.array([
-        [0.70, 0.30],   # low  -> low 0.70, high 0.30
-        [0.40, 0.60],   # high -> low 0.40, high 0.60
+        [0.80, 0.20],   # low  -> low 0.80, high 0.20  (stable, low-price regime)
+        [0.30, 0.70],   # high -> low 0.30, high 0.70
     ]),
     "peak":     np.array([
         [0.10, 0.90],   # low  -> high with high probability (peak demand drives prices up)
@@ -38,6 +38,9 @@ PRICE_TRANSITION = {
         [0.50, 0.50],
     ]),
 }
+
+# Probability of a rare price spike forced to "high" — volatile regime only
+SPIKE_PROB = 0.07
 
 # ---------------------------------------------------------------------------
 # Generation transitions — conditioned on the NEXT regime
@@ -71,9 +74,20 @@ def sample_next_regime(current_regime: str, rng: np.random.Generator) -> str:
 
 
 def sample_next_price(current_price: str, next_regime: str, rng: np.random.Generator) -> str:
-    idx = PRICE_IDX[current_price]
-    next_idx = rng.choice(len(PRICE_STATES), p=PRICE_TRANSITION[next_regime][idx])
-    return PRICE_STATES[next_idx]
+    idx   = PRICE_IDX[current_price]
+    probs = PRICE_TRANSITION[next_regime][idx].copy()
+
+    # Mean reversion in volatile: if currently high, increase pull toward low
+    if next_regime == "volatile" and current_price == "high":
+        probs = np.array([0.65, 0.35])
+
+    next_price = PRICE_STATES[rng.choice(len(PRICE_STATES), p=probs)]
+
+    # Spike: additive event — applied after base sampling, not a hard override
+    if next_regime == "volatile" and rng.random() < SPIKE_PROB:
+        next_price = "high" if rng.random() < 0.70 else next_price
+
+    return next_price
 
 
 def sample_next_gen(current_gen: str, next_regime: str, rng: np.random.Generator) -> str:

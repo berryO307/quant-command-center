@@ -178,3 +178,48 @@ def plot_action_histogram(results: dict, save_path: str, title: str = "Action Di
     plt.savefig(save_path, dpi=150)
     plt.close()
     print(f"  Saved: {save_path}")
+
+
+# ---------------------------------------------------------------------------
+# Plot 4 — Inventory sensitivity
+# ---------------------------------------------------------------------------
+
+def plot_inventory_sensitivity(results: dict, save_path: str) -> None:
+    """
+    Dual-axis chart showing the tradeoff introduced by inventory penalty.
+    Left  axis: cumulative alpha (reward)
+    Right axis: hold action count
+    results: dict[inventory_coeff (float) -> SimulationSummary]
+    """
+    keys        = sorted(results.keys())
+    alphas      = [results[k].alpha_pnl        for k in keys]
+    hold_counts = [results[k].action_counts[0] for k in keys]
+
+    fig, ax1 = plt.subplots(figsize=(9, 5))
+
+    c_alpha = "#2980b9"
+    c_hold  = "#e74c3c"
+
+    ax1.plot(keys, alphas,      color=c_alpha, marker="o", linewidth=2, label="Alpha PnL")
+    ax1.set_xlabel("inventory_coeff")
+    ax1.set_ylabel("Cumulative Alpha", color=c_alpha)
+    ax1.tick_params(axis="y", labelcolor=c_alpha)
+    ax1.set_xticks(keys)
+
+    ax2 = ax1.twinx()
+    ax2.plot(keys, hold_counts, color=c_hold, marker="s", linewidth=2,
+             linestyle="--", label="Hold count")
+    ax2.set_ylabel("Hold Action Count", color=c_hold)
+    ax2.tick_params(axis="y", labelcolor=c_hold)
+
+    lines  = ax1.get_lines() + ax2.get_lines()
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc="center right", framealpha=0.9)
+
+    ax1.set_title("Inventory Sensitivity: Alpha vs Hold Behaviour")
+    ax1.grid(axis="y", linestyle="--", alpha=0.4)
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150)
+    plt.close()
+    print(f"  Saved: {save_path}")

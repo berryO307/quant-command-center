@@ -4,11 +4,6 @@ from itertools import product
 from src.dynamics import PRICE_STATES, GEN_STATES, REGIME_STATES, sample_next_exogenous
 from src.environment import ACTIONS, BATTERY_MIN, BATTERY_MAX, MDPEnvironment, State
 
-
-# ---------------------------------------------------------------------------
-# State enumeration
-# ---------------------------------------------------------------------------
-
 def all_states(battery_max: int = BATTERY_MAX) -> list[State]:
     return [
         State(b, p, g, r)
@@ -19,11 +14,6 @@ def all_states(battery_max: int = BATTERY_MAX) -> list[State]:
             REGIME_STATES,
         )
     ]
-
-
-# ---------------------------------------------------------------------------
-# Value iteration
-# ---------------------------------------------------------------------------
 
 def value_iteration(
     gamma:     float          = 0.95,

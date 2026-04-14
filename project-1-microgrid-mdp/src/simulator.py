@@ -5,11 +5,6 @@ import pandas as pd
 
 from src.environment import ACTIONS, DEMAND, GEN_VALUES, MDPEnvironment, PRICE_VALUES, State
 
-
-# ---------------------------------------------------------------------------
-# Result container
-# ---------------------------------------------------------------------------
-
 @dataclass
 class SimulationSummary:
     total_reward:  float          # cumulative R_active (= alpha_pnl)
@@ -18,10 +13,6 @@ class SimulationSummary:
     baseline_pnl:  float          # cumulative PnL without battery
     alpha_pnl:     float          # battery contribution = mdp_pnl - baseline_pnl
 
-
-# ---------------------------------------------------------------------------
-# Simulator
-# ---------------------------------------------------------------------------
 
 class Simulator:
     def __init__(
@@ -34,9 +25,6 @@ class Simulator:
         self.policy  = policy
         self.horizon = horizon
 
-    # ------------------------------------------------------------------
-    # Core runner
-    # ------------------------------------------------------------------
 
     def _run(self, action_fn) -> SimulationSummary:
         records             = []
@@ -84,10 +72,6 @@ class Simulator:
             baseline_pnl  = cumulative_baseline,
             alpha_pnl     = cumulative_alpha,
         )
-
-    # ------------------------------------------------------------------
-    # Public methods
-    # ------------------------------------------------------------------
 
     def run_policy(self) -> SimulationSummary:
         return self._run(action_fn=lambda s: self.policy[s])
