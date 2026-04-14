@@ -110,7 +110,7 @@ $$R(s, a) = \underbrace{\text{market PnL}}_{\text{buy low, sell high}} \;-\; \un
 The value of a state $V(s)$ is the long-run expected reward of starting there and acting optimally. The optimal value satisfies the **Bellman optimality equation**:
 
 $$
-V^*(s) = \max_{a} \left[ R(s, a) + \gamma \, \mathbb{E}\left[V^*(s')\right] \right]
+V^{*}(s) = \max_{a} \left[ R(s, a) + \gamma \, \mathbb{E}\left[V^*(s')\right] \right]
 $$
 
 In words: *the value of a state equals the best action's immediate reward plus the discounted expected value of wherever you land next.*
