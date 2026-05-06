@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 results/data/
-results/plots/*.png
+!results/plots/
+!results/plots/*.png
 .vscode/
